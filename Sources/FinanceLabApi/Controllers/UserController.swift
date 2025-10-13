@@ -23,13 +23,21 @@ struct UserController: RouteCollection {
     
     @Sendable
     func create(_ req: Request) async throws -> UserPublicDTO {
-        let dto = try req.content.decode(CreateUserDTO.self)
-        
-        let user = User(firstName: dto.firstName, lastName: dto.lastName, email: dto.email, password: dto.password)
-        
-        try await user.create(on: req.db)
+        let user = try req.content.decode(User.self)
+        user.password = try Bcrypt.hash(user.password)
+        try await user.save(on: req.db)
         return try UserPublicDTO(from: user)
     }
+    
+//    @Sendable
+//    func create(_ req: Request) async throws -> UserPublicDTO {
+//        let dto = try req.content.decode(CreateUserDTO.self)
+//        
+//        let user = User(firstName: dto.firstName, lastName: dto.lastName, email: dto.email, password: dto.password)
+//        
+//        try await user.create(on: req.db)
+//        return try UserPublicDTO(from: user)
+//    }
 
     @Sendable
     func list(_ req: Request) async throws -> [UserPublicDTO] {
