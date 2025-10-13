@@ -14,8 +14,10 @@ struct UserController: RouteCollection {
         
         users.post(use: create)
         users.get(use: list)
-        users.get(":userID", use: get)
-        users.delete(":userID", use: delete)
+        users.group(":userID") { user in
+            user.get(use: self.get)
+            user.delete(use: self.delete)
+        }
     }
     
     func create(_ req: Request) async throws -> UserPublicDTO {
