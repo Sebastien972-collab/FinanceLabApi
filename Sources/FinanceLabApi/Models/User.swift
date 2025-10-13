@@ -8,7 +8,7 @@
 import Vapor
 import Fluent
 
-final class Utilisateur: Model, Content, @unchecked Sendable {
+final class User: Model, Content, @unchecked Sendable {
     static let schema = "users" // Nom de la table MySQL
     
     @ID(key: .id) var id: UUID?
@@ -21,5 +21,13 @@ final class Utilisateur: Model, Content, @unchecked Sendable {
     
     // Constructeur vide (requis par Fluent)
     init() {}
+    
+    init(id: UUID? = nil, firstName: String, lastName: String, password: String, email: String) {
+        self.id = id
+        self.firstName = firstName
+        self.lastName = lastName
+        self.password = password
+        self.email = email
+    }
 }
 
