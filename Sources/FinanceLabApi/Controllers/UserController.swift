@@ -7,13 +7,20 @@
 
 import Vapor
 import Fluent
+import JWT
 
 struct UserController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let users = routes.grouped("users")
         
         users.post(use: create)
-        users.get(use: list)
+        users.get(use: index)
+        users.post("login", use: login)
+        
+        let protectedRoutes = users.grouped(JWTMiddleware())
+        protectedRoutes.get("profile", use: profile)
+        
+        // TODO: Some of these routes might need to be disabled before going into production
         users.group(":userID") { user in
             user.get(use: self.get)
             user.delete(use: self.delete)
@@ -29,18 +36,39 @@ struct UserController: RouteCollection {
         return try UserPublicDTO(from: user)
     }
     
-//    @Sendable
-//    func create(_ req: Request) async throws -> UserPublicDTO {
-//        let dto = try req.content.decode(CreateUserDTO.self)
-//        
-//        let user = User(firstName: dto.firstName, lastName: dto.lastName, email: dto.email, password: dto.password)
-//        
-//        try await user.create(on: req.db)
-//        return try UserPublicDTO(from: user)
-//    }
+    @Sendable
+    func login(_ req: Request) async throws -> String {
+        let userData = try req.content.decode(LoginRequest.self)
+        
+        guard let user = try await User.query(on: req.db)
+            .filter(\.$email == userData.email)
+            .first() else {
+            throw Abort(.unauthorized, reason: "This user does not exist.")
+        }
+        
+        guard try Bcrypt.verify(userData.password, created: user.password) else {
+            throw Abort(.unauthorized, reason: "Incorrect password.")
+        }
+        
+        let payload = UserPayload(id: user.id!)
+        let signer = JWTSigner.hs256(key: "This_app_was_supposed_to_be_called_Dembo")
+        let token = try signer.sign(payload)
+        return token
+    }
+    
+    @Sendable
+    func profile(_ req: Request) async throws -> UserPublicDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        
+        guard let user = try await User.find(payload.id, on: req.db) else {
+            throw Abort(.notFound)
+        }
+        
+        return try UserPublicDTO(from: user)
+    }
 
     @Sendable
-    func list(_ req: Request) async throws -> [UserPublicDTO] {
+    func index(_ req: Request) async throws -> [UserPublicDTO] {
         let users = try await User.query(on: req.db).all()
         return try users.map(UserPublicDTO.init(from:))
     }

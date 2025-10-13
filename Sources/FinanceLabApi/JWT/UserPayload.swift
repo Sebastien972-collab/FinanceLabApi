@@ -24,6 +24,6 @@ struct UserPayload: JWTPayload, Authenticatable {
     // Constructeur qui définit l'ID et la date d'expiration
     init(id: UUID) {
         self.id = id
-        self.expiration = Date().addingTimeInterval(3600 * 24) // Expire dans 1 jour
+        self.expiration = Date().addingTimeInterval(3600 * 24 * 30) // Expire dans 30 jours
     }
 }
