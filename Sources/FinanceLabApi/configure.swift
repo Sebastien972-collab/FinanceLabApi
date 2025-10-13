@@ -22,8 +22,8 @@ public func configure(_ app: Application) async throws {
     // register routes
     try routes(app)
     
-    // auto launch migrations
-    try await app.autoMigrate()
+    // uncomment to launch migrations
+//    try await app.autoMigrate()
     
     // uncomment to cancel last migration
 //    try await app.autoRevert()

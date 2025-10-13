@@ -12,8 +12,8 @@ final class User: Model, Content, @unchecked Sendable {
     static let schema = "users" // Nom de la table MySQL
     
     @ID(key: .id) var id: UUID?
-    @Field(key: "firstName") var firstName: String
-    @Field(key: "lastName") var lastName: String
+    @Field(key: "first_name") var firstName: String
+    @Field(key: "last_name") var lastName: String
     @Field(key: "email") var email: String
     @Timestamp(key: "date_of_registration", on: .create) var dateOfRegistration: Date?
     @Field(key: "password") var password: String
