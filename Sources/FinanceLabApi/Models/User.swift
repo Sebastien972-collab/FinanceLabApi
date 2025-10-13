@@ -17,17 +17,16 @@ final class User: Model, Content, @unchecked Sendable {
     @Field(key: "email") var email: String
     @Timestamp(key: "date_of_registration", on: .create) var dateOfRegistration: Date?
     @Field(key: "password") var password: String
-    @Field(key: "profile_picture") var profilePicture: UUID?
     
     // Constructeur vide (requis par Fluent)
     init() {}
     
-    init(id: UUID? = nil, firstName: String, lastName: String, password: String, email: String) {
+    init(id: UUID? = nil, firstName: String, lastName: String, email: String, password: String) {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
-        self.password = password
         self.email = email
+        self.password = password
     }
 }
 

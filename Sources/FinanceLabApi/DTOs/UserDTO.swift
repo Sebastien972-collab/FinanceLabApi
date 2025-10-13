@@ -1,5 +1,5 @@
 //
-//  CreateUserDTO.swift
+//  UserDTO.swift
 //  FinanceLabApi
 //
 //  Created by Anne Ferret on 13/10/2025.
@@ -28,4 +28,11 @@ struct UserPublicDTO: Content {
         self.lastName = user.lastName
         self.dateOfRegistration = user.dateOfRegistration
     }
+}
+
+struct PatchUserDTO: Decodable {
+    var firstName: String?
+    var lastName: String?
+    var email: String?
+    var password: String?
 }
