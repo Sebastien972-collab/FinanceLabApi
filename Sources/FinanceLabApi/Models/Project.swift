@@ -32,9 +32,6 @@ final class Project: Model, Content, @unchecked Sendable {
     @OptionalField(key: "current_image")
     var currentImage: String?
 
-    @Field(key: "status")
-    var status: String
-
     init() {}
 
     init(

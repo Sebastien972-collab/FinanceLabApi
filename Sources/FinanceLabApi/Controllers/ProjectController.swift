@@ -15,6 +15,7 @@ struct ProjectController: RouteCollection {
         projects.post(use: create)
         projects.get(":projectID", use: getById)
         projects.delete(":projectID", use: delete)
+        projects.put(":projectID", use: update)
     }
 
     func index(req: Request) async throws -> [Project] {
@@ -40,5 +41,16 @@ struct ProjectController: RouteCollection {
         }
         try await project.delete(on: req.db)
         return .noContent
+    }
+
+    func update(req: Request) async throws -> Project {
+        guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
+            throw Abort(.notFound, reason: "Project not found")
+        }
+        var input = try req.content.decode(Project.self)
+        // Preserve the existing identifier to ensure we update the correct record
+        input.id = existing.id
+        try await input.update(on: req.db)
+        return input
     }
 }
