@@ -19,12 +19,12 @@ struct UserController: RouteCollection {
         
         let protectedRoutes = users.grouped(JWTMiddleware())
         protectedRoutes.get("profile", use: profile)
+        protectedRoutes.patch("update", use: update)
         
         // TODO: Some of these routes might need to be disabled before going into production
         users.group(":userID") { user in
             user.get(use: self.get)
             user.delete(use: self.delete)
-            user.patch(use: self.patch)
         }
     }
     
@@ -93,11 +93,14 @@ struct UserController: RouteCollection {
     }
     
     @Sendable
-    func patch(_ req: Request) async throws -> UserPublicDTO {
+    func update(_ req: Request) async throws -> UserPublicDTO {
+        let payload = try req.auth.require(UserPayload.self)
         let patch = try req.content.decode(PatchUserDTO.self)
-        guard let user = try await User.find(req.parameters.get("userID"), on: req.db) else {
+        
+        guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound)
         }
+        
         if let firstName = patch.firstName {
             user.firstName = firstName
         }
@@ -106,9 +109,6 @@ struct UserController: RouteCollection {
         }
         if let email = patch.email {
             user.email = email
-        }
-        if let password = patch.password {
-            user.password = password
         }
         try await user.save(on: req.db)
         return try UserPublicDTO(from: user)
