@@ -37,7 +37,7 @@ struct UserController: RouteCollection {
     }
     
     @Sendable
-    func login(_ req: Request) async throws -> String {
+    func login(_ req: Request) async throws -> [String: String] {
         let userData = try req.content.decode(LoginRequest.self)
         
         guard let user = try await User.query(on: req.db)
@@ -53,7 +53,8 @@ struct UserController: RouteCollection {
         let payload = UserPayload(id: user.id!)
         let signer = JWTSigner.hs256(key: "This_app_was_supposed_to_be_called_Dembo")
         let token = try signer.sign(payload)
-        return token
+        //return token
+        return ["token": token]
     }
     
     @Sendable
