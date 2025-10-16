@@ -47,7 +47,7 @@ struct ProjectController: RouteCollection {
         guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
         }
-        var input = try req.content.decode(Project.self)
+        let input = try req.content.decode(Project.self)
         // Preserve the existing identifier to ensure we update the correct record
         input.id = existing.id
         try await input.update(on: req.db)
