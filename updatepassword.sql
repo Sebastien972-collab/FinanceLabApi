@@ -1,3 +1,0 @@
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'toor';
-FLUSH PRIVILEGES;
-EXIT;
