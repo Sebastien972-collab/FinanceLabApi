@@ -22,6 +22,16 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(RemoveStatusFromProject())
     app.migrations.add(CreateUser())
     app.migrations.add(AnswerMigration())
+    app.migrations.add(TransactionMigration())
+    app.migrations.add(TransactionCategoryMigration())
+    app.migrations.add(UserCategoryMigration())
+    app.migrations.add(DefinitionMigration())
+    app.migrations.add(AdviceMigration())
+    app.migrations.add(QuestionMigration())
+    app.migrations.add(QuestionGroupMigration())
+    app.migrations.add(ArticleMigration())
+    app.migrations.add(ArticleGroupMigration())
+    
     
     // MARK: - Launch or revert migrations
 //    try await app.autoMigrate()

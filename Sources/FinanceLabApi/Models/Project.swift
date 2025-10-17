@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 
 final class Project: Model, Content, @unchecked Sendable {
-    static let schema = "projects"
+    static let schema = "project"
 
     @ID(key: .id)
     var id: UUID?
@@ -32,6 +32,7 @@ final class Project: Model, Content, @unchecked Sendable {
     @OptionalField(key: "current_image")
     var currentImage: String?
 
+    // Constructeur vide (requis par Fluent)
     init() {}
 
     init(

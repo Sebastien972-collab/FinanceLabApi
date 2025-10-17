@@ -10,7 +10,7 @@ import Fluent
 
 
 final class Answer: Model, Content, @unchecked Sendable {
-    static let schema = "answers"
+    static let schema = "answer"
 
     @ID(key: .id)
     var id: UUID?
@@ -24,7 +24,9 @@ final class Answer: Model, Content, @unchecked Sendable {
     @Field(key: "#id_question")
     var questionID: UUID
 
+    // Constructeur vide (requis par Fluent)
     init() {}
+    
     init(id: UUID, userID: UUID, questionID: UUID) {
         self.id = id
         self.userID = userID

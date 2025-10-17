@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 
 final class User: Model, Content, @unchecked Sendable {
-    static let schema = "users" // Nom de la table MySQL
+    static let schema = "user" // Nom de la table MySQL
     
     @ID(key: .id) var id: UUID?
     @Field(key: "first_name") var firstName: String
