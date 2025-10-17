@@ -2,6 +2,7 @@ import Fluent
 import FluentMySQLDriver
 import Vapor
 import NIOSSL
+import Gatekeeper
 
 public func configure(_ app: Application) async throws {
     
@@ -16,16 +17,44 @@ public func configure(_ app: Application) async throws {
     // ✅ TLS moderne sans vérification de certificat
     var tls = TLSConfiguration.makeClientConfiguration()
     tls.certificateVerification = .none
-            
+        
     // MARK: - Migrations
     app.migrations.add(CreateProject())
     app.migrations.add(RemoveStatusFromProject())
     app.migrations.add(CreateUser())
     app.migrations.add(AnswerMigration())
     
-    // MARK: - Launch or revert migrations
-//    try await app.autoMigrate()
-    try await app.autoRevert()
+    // MARK: - Middleware configuration
+    
+    // CORS
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .all,
+        allowedMethods: [.GET, .POST, .PUT, .DELETE, .OPTIONS],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin],
+        cacheExpiration: 800
+        )
+    let corsMiddleware = CORSMiddleware(configuration: corsConfiguration)
+    
+    // Gatekeeper
+    app.caches.use(.memory)
+    app.gatekeeper.config = .init(maxRequests: 100, per: .minute)
+    
+    // MARK: - Middlewares
+    // Rappel de l'ordre :
+    // 1. ErrorMiddleware
+    // 2. RequestID → Logging
+    // 3. CORS
+    // 4. Authentification/Autorisation
+    // 5. Rate limit / politiques d'usage
+    // 6. FileMiddleware
+
+    app.middleware.use(corsMiddleware)
+    app.middleware.use(GatekeeperMiddleware())
+    
+    // MARK: - Migrations
+    try await app.autoMigrate()
+    // uncomment this to revert migrations:
+//    try await app.autoRevert()
     
     // MARK: - Routes
     // register routes
