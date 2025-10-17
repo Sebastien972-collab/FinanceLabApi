@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="stylesheet.css"/>
+        <title>Serenly API call</title>
+    </head>
+    <body>
+        <div id="header">
+            <h1>Serenly API call</h1>
+            <img src="img/serenly_logotype.png" alt="Serenly logotype"/>
+        </div>
+        <div>
+            <table id="usersTable"></table>
+        </div>
+        <div id="connect_form">
+            <button onclick="getUsers()">Get all users in database</button>
+        </div>
+        <script>
+            const api = "http://localhost:8080/users"
+            
+            function getUsers() {
+                fetch(api)
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            throw new Error('API request failed');
+                        }
+                    })
+                    .then(users => {
+                        console.log(users);
+                        let table = "<tr><th>ID</th><th>First name</th><th>Last name</th><th>Email</th><th>Registered on</th></tr>"
+                        users.forEach(user => {
+                            const id = ("<td class=\"user_id\">" + user.id + "</td>")
+                            const firstName = ("<td class=\"user_firstName\">" + user.firstName + "</td>")
+                            const lastName = ("<td class=\"user_lastName\">" + user.lastName + "</td>")
+                            const email = ("<td class=\"user_email\">" + user.email + "</td>")
+                            const registeredOn = ("<td class=\"user_dateOfRegistration\">" + user.dateOfRegistration + "</td>")
+                            const row = ("<tr class=\"user_row\">" + id + firstName + lastName + email + registeredOn + "</tr>")
+                            table += row
+                        })
+                        document.getElementById("usersTable").innerHTML = table
+                    })
+                .catch(error => {
+                    console.error(error);
+                });
+            }
+        </script>
+    </body>
+</html>

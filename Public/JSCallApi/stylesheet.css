@@ -1,0 +1,37 @@
+body {
+    background: url("img/background.jpg") no-repeat fixed;
+    background-size: 100% auto;
+    background-color: #1A1C23;
+    padding: 0.5rem;
+}
+h1 {
+    display: none;
+}
+p, div, table, button {
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    color: #484F59;
+    text-align: left;
+}
+table {
+    background: rgba(250, 250, 250, 0.5);
+    border-collapse: collapse;
+}
+th, td {
+    border: 2px solid rgba(26, 28, 35, 0.25);
+    padding: 0.6rem;
+}
+div {
+    padding-bottom: 1.3rem;
+}
+#header img {
+    width: 150px;
+    height: 42px;
+}
+button {
+    background: #00B8A9;
+    border: none;
+    color: #FAFAFA;
+    padding: 16px 32px;
+    border-radius: 32px;
+}
