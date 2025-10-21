@@ -1,5 +1,5 @@
 //
-//  ArticleGroup.swift
+//  Definition.swift
 //  FinanceLabApi
 //
 //  Created by YacineBahaka  on 17/10/2025.
@@ -8,9 +8,8 @@
 import Vapor
 import Fluent
 
-final class ArticleGroup: Model, Content, @unchecked Sendable {
-    
-    static let schema = "article_group"
+final class Definition: Model, Content, @unchecked Sendable  {
+    static let schema = "definitions"
     
     @ID(key: .id)
     var id: UUID?
@@ -18,15 +17,16 @@ final class ArticleGroup: Model, Content, @unchecked Sendable {
     @Field(key: "name")
     var name: String
     
-    @Field(key: "icon")
-    var icon: String
+    @Field(key: "amount")
+    var content: String
     
     // Constructeur vide (requis par Fluent)
     init() { }
     
-    init(id: UUID? = nil, name: String, icon: String) {
+    init(id: UUID? = nil, name: String, content: String) {
         self.id = id
         self.name = name
-        self.icon = icon
+        self.content = content
     }
+
 }

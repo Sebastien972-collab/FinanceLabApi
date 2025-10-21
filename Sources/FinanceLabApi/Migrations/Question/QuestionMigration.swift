@@ -10,15 +10,16 @@ import Fluent
 struct QuestionMigration: AsyncMigration {
     
     func prepare(on database: any Database) async throws {
-        try await database.schema("question")
+        try await database.schema("questions")
             .id()
             .field("content", .string, .required)
-            .field("multiple_choice", .bool, .required)
+        //        MARK: FOREIGN KEY
             .field("id_question_group", .uuid, .required)
+            .foreignKey("id_question_group", references: "question_group", "id", onDelete: .cascade)
             .create()
     }
     
     func revert(on database: any Database) async throws {
-        try await database.schema("question").delete()
+        try await database.schema("questions").delete()
     }
 }

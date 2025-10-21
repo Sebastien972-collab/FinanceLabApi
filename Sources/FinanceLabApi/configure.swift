@@ -18,19 +18,27 @@ public func configure(_ app: Application) async throws {
     tls.certificateVerification = .none
             
     // MARK: - Migrations
-    app.migrations.add(CreateProject())
-    app.migrations.add(RemoveStatusFromProject())
-    app.migrations.add(CreateUser())
-    app.migrations.add(AnswerMigration())
-    app.migrations.add(TransactionMigration())
-    app.migrations.add(TransactionCategoryMigration())
     app.migrations.add(UserCategoryMigration())
+    app.migrations.add(UserMigration())
+    app.migrations.add(TransactionCategoryMigration())
+    app.migrations.add(TransactionMigration())
+    app.migrations.add(ProjectMigration())
     app.migrations.add(DefinitionMigration())
     app.migrations.add(AdviceMigration())
-    app.migrations.add(QuestionMigration())
     app.migrations.add(QuestionGroupMigration())
+    app.migrations.add(QuestionMigration())
+    app.migrations.add(AnswerMigration())
+    
+    // Voir avec l'équipe concernant la table answer_choice. (MLD)
+    
+    app.migrations.add(ArticleCategoryMigration())
     app.migrations.add(ArticleMigration())
-    app.migrations.add(ArticleGroupMigration())
+    
+    app.migrations.add(RemoveStatusFromProject())
+   
+    
+    
+    
     
     
     // MARK: - Launch or revert migrations

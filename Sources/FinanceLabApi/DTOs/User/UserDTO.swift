@@ -7,7 +7,7 @@
 
 import Vapor
 
-struct CreateUserDTO: Content {
+struct UserDTO: Content {
     let firstName: String
     let lastName: String
     let email: String

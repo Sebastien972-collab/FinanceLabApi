@@ -11,13 +11,11 @@ struct QuestionDTO: Content {
     
     let id: UUID?
     let content: String
-    let multipleChoice: Bool
-    let idQuestionGroup: UUID
+    let idQuestionGroup: QuestionGroupDTO
     
-    init(from question: Question) throws {
+    init(from question: Question, questionGroup: QuestionGroup) throws {
         self.id = try question.requireID()
         self.content = question.content
-        self.multipleChoice = question.multipleChoice
-        self.idQuestionGroup = question.idQuestionGroup
+        self.idQuestionGroup = try QuestionGroupDTO(from: questionGroup)
     }
 }

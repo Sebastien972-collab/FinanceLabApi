@@ -9,13 +9,13 @@ import Vapor
 import Fluent
 
 struct AnswerController: RouteCollection {
-    func boot(routes: any Vapor.RoutesBuilder) throws {
+    func boot(routes: any RoutesBuilder) throws {
         let answers = routes.grouped("answers")
         answers.get(use: index)
         answers.post(use: create)
-        answers.get(":answersID", use: getById)
-        answers.delete(":answersID", use: delete)
-        answers.put(":answersID", use: update)
+        answers.get(":answerID", use: getById)
+        answers.delete(":answerID", use: delete)
+        answers.put(":answerID", use: update)
         
     }
     
@@ -28,31 +28,34 @@ struct AnswerController: RouteCollection {
         try await answer.save(on: req.db)
         return answer
     }
-
+    
     func getById(req: Request) async throws -> Answer {
-        guard let project = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
-            throw Abort(.notFound, reason: "Project not found")
+        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+            throw Abort(.notFound, reason: "Answer not found")
         }
-        return project
+        return answer
     }
-
+    
     func delete(req: Request) async throws -> HTTPStatus {
-        guard let project = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
             throw Abort(.notFound)
         }
-        try await project.delete(on: req.db)
+        try await answer.delete(on: req.db)
         return .noContent
     }
-
+    
     func update(req: Request) async throws -> Answer {
-        guard let existing = try await Project.find(req.parameters.get("answerID"), on: req.db) else {
-            throw Abort(.notFound, reason: "Aswer not found")
+        guard let existing = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+            throw Abort(.notFound, reason: "Answer not found")
         }
         let input = try req.content.decode(Answer.self)
         // Preserve the existing identifier to ensure we update the correct record
-        input.id = existing.id
-        try await input.update(on: req.db)
-        return input
+        existing.content = input.content
+        existing.idUser = input.idUser
+        existing.idQuestion = input.idQuestion
+        
+        try await existing.save(on: req.db)
+        return existing
     }
     
 }

@@ -14,14 +14,15 @@ struct ArticleDTO: Content {
     let image: String
     let creationDate: Date?
     let content: String
-    let idArticleCategory: UUID
+    let idArticleCategory: ArticleCategoryDTO
     
-    init(from article: Article) throws {
+    init(from article: Article, articleCategory: ArticleCategory) throws {
         self.id = try article.requireID()
         self.title = article.title
         self.image = article.image
         self.creationDate = article.creationDate
         self.content = article.content
-        self.idArticleCategory = article.idArticleCategory
+        self.idArticleCategory = try ArticleCategoryDTO(from: articleCategory)
     }
+    
 }

@@ -10,7 +10,7 @@ import Fluent
 
 final class Article: Model, Content, @unchecked Sendable {
     
-    static let schema = "article"
+    static let schema = "articles"
     
     @ID(key: .id)
     var id: UUID?

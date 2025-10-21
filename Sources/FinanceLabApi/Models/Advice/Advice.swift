@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 
 final class Advice: Model, Content, @unchecked Sendable {
-    static let schema = "advice"
+    static let schema = "advices"
     
     @ID(key: .id)
     var id: UUID?
