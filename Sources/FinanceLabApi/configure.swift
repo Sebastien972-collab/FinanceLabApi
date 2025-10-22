@@ -2,6 +2,7 @@ import Fluent
 import FluentMySQLDriver
 import Vapor
 import NIOSSL
+import Gatekeeper
 
 public func configure(_ app: Application) async throws {
     
@@ -13,10 +14,10 @@ public func configure(_ app: Application) async throws {
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .mysql)
 
-    // ✅ TLS moderne sans vérification de certificat
+    // TLS moderne sans vérification de certificat
     var tls = TLSConfiguration.makeClientConfiguration()
     tls.certificateVerification = .none
-            
+        
     // MARK: - Migrations
     app.migrations.add(UserCategoryMigration())
     app.migrations.add(UserMigration())
@@ -27,23 +28,40 @@ public func configure(_ app: Application) async throws {
     app.migrations.add(AdviceMigration())
     app.migrations.add(QuestionGroupMigration())
     app.migrations.add(QuestionMigration())
-    app.migrations.add(AnswerMigration())
-    
-    // Voir avec l'équipe concernant la table answer_choice. (MLD)
-    
+    app.migrations.add(AnswerMigration())    
     app.migrations.add(ArticleCategoryMigration())
     app.migrations.add(ArticleMigration())
-    
     app.migrations.add(RemoveStatusFromProject())
-   
+       
+    // MARK: Configurations
+  
+    // CORS
+    let corsConfiguration = CORSMiddleware.Configuration(
+        allowedOrigin: .all,
+        allowedMethods: [.GET, .POST, .PUT, .DELETE, .OPTIONS],
+        allowedHeaders: [.accept, .authorization, .contentType, .origin],
+        cacheExpiration: 800
+        )
+    let corsMiddleware = CORSMiddleware(configuration: corsConfiguration)
+
+    // Gatekeeper
+    app.caches.use(.memory)
+    app.gatekeeper.config = .init(maxRequests: 100, per: .minute)
     
+    // MARK: - Middlewares
+    // Rappel de l'ordre :
+    // 1. ErrorMiddleware
+    // 2. RequestID → Logging
+    // 3. CORS
+    // 4. Authentification/Autorisation
+    // 5. Rate limit / politiques d'usage
+    // 6. FileMiddleware
+
+    app.middleware.use(corsMiddleware)
+    app.middleware.use(GatekeeperMiddleware())
     
-    
-    
-    
-    // MARK: - Launch or revert migrations
+    // MARK: - Migrations
     try await app.autoMigrate()
-//    try await app.autoRevert()
     
     // MARK: - Routes
     // register routes
