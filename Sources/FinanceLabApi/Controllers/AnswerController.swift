@@ -14,8 +14,8 @@ struct AnswerController: RouteCollection {
         answers.get(use: index)
         answers.post(use: create)
         answers.get(":answerID", use: getById)
-        answers.delete(":answerID", use: delete)
-        answers.put(":answerID", use: update)
+//        answers.delete(":answerID", use: delete)
+//        answers.put(":answerID", use: update)
         
     }
     
@@ -36,26 +36,26 @@ struct AnswerController: RouteCollection {
         return answer
     }
     
-    func delete(req: Request) async throws -> HTTPStatus {
-        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
-            throw Abort(.notFound)
-        }
-        try await answer.delete(on: req.db)
-        return .noContent
-    }
-    
-    func update(req: Request) async throws -> Answer {
-        guard let existing = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
-            throw Abort(.notFound, reason: "Answer not found")
-        }
-        let input = try req.content.decode(Answer.self)
-        // Preserve the existing identifier to ensure we update the correct record
-        existing.content = input.content
-        existing.idUser = input.idUser
-        existing.idQuestion = input.idQuestion
-        
-        try await existing.save(on: req.db)
-        return existing
-    }
+//    func delete(req: Request) async throws -> HTTPStatus {
+//        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+//            throw Abort(.notFound)
+//        }
+//        try await answer.delete(on: req.db)
+//        return .noContent
+//    }
+//    
+//    func update(req: Request) async throws -> Answer {
+//        guard let existing = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+//            throw Abort(.notFound, reason: "Answer not found")
+//        }
+//        let input = try req.content.decode(Answer.self)
+//        // Preserve the existing identifier to ensure we update the correct record
+//        existing.content = input.content
+//        existing.idUser = input.idUser
+//        existing.idQuestion = input.idQuestion
+//        
+//        try await existing.save(on: req.db)
+//        return existing
+//    }
     
 }

@@ -19,19 +19,19 @@ public func configure(_ app: Application) async throws {
     tls.certificateVerification = .none
         
     // MARK: - Migrations
-    app.migrations.add(UserCategoryMigration())
-    app.migrations.add(UserMigration())
-    app.migrations.add(TransactionCategoryMigration())
-    app.migrations.add(TransactionMigration())
-    app.migrations.add(ProjectMigration())
-    app.migrations.add(DefinitionMigration())
-    app.migrations.add(AdviceMigration())
-    app.migrations.add(QuestionGroupMigration())
-    app.migrations.add(QuestionMigration())
-    app.migrations.add(AnswerMigration())    
-    app.migrations.add(ArticleCategoryMigration())
-    app.migrations.add(ArticleMigration())
-    app.migrations.add(RemoveStatusFromProject())
+//    app.migrations.add(UserCategoryMigration())
+//    app.migrations.add(UserMigration())
+//    app.migrations.add(TransactionCategoryMigration())
+//    app.migrations.add(TransactionMigration())
+//    app.migrations.add(ProjectMigration())
+//    app.migrations.add(DefinitionMigration())
+//    app.migrations.add(AdviceMigration())
+//    app.migrations.add(QuestionGroupMigration())
+//    app.migrations.add(QuestionMigration())
+//    app.migrations.add(AnswerMigration())    
+//    app.migrations.add(ArticleCategoryMigration())
+//    app.migrations.add(ArticleMigration())
+//    app.migrations.add(RemoveStatusFromProject())
        
     // MARK: Configurations
   
