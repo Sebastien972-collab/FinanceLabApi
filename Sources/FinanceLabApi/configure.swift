@@ -14,18 +14,27 @@ public func configure(_ app: Application) async throws {
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .mysql)
 
-    // ✅ TLS moderne sans vérification de certificat
+    // TLS moderne sans vérification de certificat
     var tls = TLSConfiguration.makeClientConfiguration()
     tls.certificateVerification = .none
         
     // MARK: - Migrations
-    app.migrations.add(CreateProject())
+    app.migrations.add(UserCategoryMigration())
+    app.migrations.add(UserMigration())
+    app.migrations.add(TransactionCategoryMigration())
+    app.migrations.add(TransactionMigration())
+    app.migrations.add(ProjectMigration())
+    app.migrations.add(DefinitionMigration())
+    app.migrations.add(AdviceMigration())
+    app.migrations.add(QuestionGroupMigration())
+    app.migrations.add(QuestionMigration())
+    app.migrations.add(AnswerMigration())    
+    app.migrations.add(ArticleCategoryMigration())
+    app.migrations.add(ArticleMigration())
     app.migrations.add(RemoveStatusFromProject())
-    app.migrations.add(CreateUser())
-    app.migrations.add(AnswerMigration())
-    
-    // MARK: - Middleware configuration
-    
+       
+    // MARK: Configurations
+  
     // CORS
     let corsConfiguration = CORSMiddleware.Configuration(
         allowedOrigin: .all,
@@ -34,7 +43,7 @@ public func configure(_ app: Application) async throws {
         cacheExpiration: 800
         )
     let corsMiddleware = CORSMiddleware(configuration: corsConfiguration)
-    
+
     // Gatekeeper
     app.caches.use(.memory)
     app.gatekeeper.config = .init(maxRequests: 100, per: .minute)
@@ -53,8 +62,6 @@ public func configure(_ app: Application) async throws {
     
     // MARK: - Migrations
     try await app.autoMigrate()
-    // uncomment this to revert migrations:
-//    try await app.autoRevert()
     
     // MARK: - Routes
     // register routes

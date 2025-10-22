@@ -11,15 +11,18 @@ import Fluent
 /// Migration to create the `answers` table
 struct AnswerMigration: AsyncMigration {
     func prepare(on database: any Database) async throws {
-        try await database.schema("answers")
+        try await database.schema("user_answer")
             .id()
             .field("content", .string, .required)
-            .field("user_id", .uuid, .required, .references("projects", "id", onDelete: .cascade))
-            .unique(on: "id")
+        //        MARK: FOREIGN KEY
+            .field("id_user", .uuid, .required)
+            .foreignKey("id_user", references: "users", "id", onDelete: .cascade)
+            .field("id_question", .uuid, .required)
+            .foreignKey("id_question", references: "questions", "id", onDelete: .cascade)
             .create()
     }
 
     func revert(on database: any Database) async throws {
-        try await database.schema("answers").delete()
+        try await database.schema("user_answer").delete()
     }
 }

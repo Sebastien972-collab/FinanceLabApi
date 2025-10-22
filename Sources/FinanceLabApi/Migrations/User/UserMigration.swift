@@ -7,7 +7,7 @@
 
 import Fluent
 
-struct CreateUser: AsyncMigration {
+struct UserMigration: AsyncMigration {
     func prepare(on db: any Database) async throws {
         try await db.schema("users")
             .id()
@@ -16,6 +16,9 @@ struct CreateUser: AsyncMigration {
             .field("email", .string, .required)
             .field("date_of_registration", .datetime, .required)
             .field("password", .string, .required)
+        //        MARK: FOREIGN KEY
+            .field("id_user_category", .uuid, .required)
+            .foreignKey("id_user_category", references: "user_category", "id", onDelete: .cascade)
             .unique(on: "email")
             .create()
     }
