@@ -13,16 +13,16 @@ struct ArticleDTO: Content {
     let title: String
     let image: String
     let creationDate: Date?
-    let content: String
-    let idArticleCategory: ArticleCategoryDTO
+    let articleCategory: String
+    let articleContents: [ArticleContent]
     
-    init(from article: Article, articleCategory: ArticleCategory) throws {
+    init(from article: Article) throws {
         self.id = try article.requireID()
         self.title = article.title
         self.image = article.image
         self.creationDate = article.creationDate
-        self.content = article.content
-        self.idArticleCategory = try ArticleCategoryDTO(from: articleCategory)
+        self.articleCategory = article.articleCategory
+        self.articleContents = article.articleContents
     }
     
 }

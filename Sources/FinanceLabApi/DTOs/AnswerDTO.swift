@@ -13,10 +13,10 @@ struct AnswerDTO: Content {
     let userID: UserPublicDTO
     let questionID: QuestionDTO
     
-    init(from answer: Answer, user: User, question: Question, questionGroup: QuestionGroup) throws {
+    init(from answer: Answer, user: User, question: Question) throws {
         self.id = try answer.requireID()
         self.content = answer.content
         self.userID = try UserPublicDTO(from: user)
-        self.questionID = try QuestionDTO(from: question, questionGroup: questionGroup)
+        self.questionID = try QuestionDTO(from: question)
     }
 }

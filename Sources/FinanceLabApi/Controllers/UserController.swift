@@ -108,9 +108,19 @@ struct UserController: RouteCollection {
         if let lastName = patch.lastName {
             user.lastName = lastName
         }
+        if let userCategory = patch.userCategory {
+            user.userCategory = userCategory
+        }
+        if let profilePictureURL = patch.profilePictureURL {
+            user.profilePictureURL = profilePictureURL
+        }
         if let email = patch.email {
             user.email = email
         }
+        if let balance = patch.balance {
+            user.balance = balance
+        }
+        
         try await user.save(on: req.db)
         return try UserPublicDTO(from: user)
     }

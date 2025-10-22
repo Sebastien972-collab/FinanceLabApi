@@ -61,7 +61,7 @@ public func configure(_ app: Application) async throws {
     app.middleware.use(GatekeeperMiddleware())
     
     // MARK: - Migrations
-    try await app.autoMigrate()
+//    try await app.autoMigrate()
     
     // MARK: - Routes
     // register routes

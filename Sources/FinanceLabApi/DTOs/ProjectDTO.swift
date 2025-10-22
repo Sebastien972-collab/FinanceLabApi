@@ -11,10 +11,9 @@ struct ProjectDTO: Content {
     
     let id: UUID?
     let name: String
-    let icon: String
+    let iconName: String
     let creationDate: Date?
-    let finalDate: Date?
-    let amountMonthly: Double
+    let endDate: Date?
     let amountSaved: Double
     let amountTotal: Double
     let idUser: UserPublicDTO
@@ -22,10 +21,9 @@ struct ProjectDTO: Content {
     init(from project: Project, user: User) throws {
         self.id = try project.requireID()
         self.name = project.name
-        self.icon = project.icon
+        self.iconName = project.iconName
         self.creationDate = project.creationDate
-        self.finalDate = project.finalDate
-        self.amountMonthly = project.amountMonthly
+        self.endDate = project.endDate
         self.amountSaved = project.amountSaved
         self.amountTotal = project.amountTotal
         self.idUser = try UserPublicDTO(from: user)

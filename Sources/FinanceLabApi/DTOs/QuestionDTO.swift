@@ -10,12 +10,18 @@ import Vapor
 struct QuestionDTO: Content {
     
     let id: UUID?
+    let label: String
     let content: String
-    let idQuestionGroup: QuestionGroupDTO
+    let followUpLabel: String?
+    let questionGroup: String
+    let answers: [Answer]
     
-    init(from question: Question, questionGroup: QuestionGroup) throws {
+    init(from question: Question) throws {
         self.id = try question.requireID()
+        self.label = question.label
         self.content = question.content
-        self.idQuestionGroup = try QuestionGroupDTO(from: questionGroup)
+        self.followUpLabel = question.followUpLabel
+        self.questionGroup = question.questionGroup
+        self.answers = question.answers
     }
 }

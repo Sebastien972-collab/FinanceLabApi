@@ -16,22 +16,35 @@ struct UserDTO: Content {
 
 struct UserPublicDTO: Content {
     let id: UUID
-    let email: String
     let firstName: String
     let lastName: String
-    let dateOfRegistration: Date?
+    let userCategory: String
+    let profilePictureURL: String
+    let email: String
+    let balance: Double
+    let answers: [Answer]
+    let projects: [Project]
+    let transactions: [Transaction]
     
     init(from user: User) throws {
         self.id = try user.requireID()
-        self.email = user.email
         self.firstName = user.firstName
         self.lastName = user.lastName
-        self.dateOfRegistration = user.dateOfRegistration
+        self.userCategory = user.userCategory
+        self.profilePictureURL = user.profilePictureURL
+        self.email = user.profilePictureURL
+        self.balance = user.balance
+        self.answers = user.answers
+        self.projects = user.projects
+        self.transactions = user.transactions
     }
 }
 
 struct PatchUserDTO: Decodable {
     var firstName: String?
     var lastName: String?
+    var userCategory: String?
+    var profilePictureURL: String?
     var email: String?
+    var balance: Double?
 }
