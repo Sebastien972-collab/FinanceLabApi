@@ -9,13 +9,16 @@ import Vapor
 import Fluent
 
 final class Transaction: Model, Content, @unchecked Sendable  {
-    static let schema = "transactions"
+    static let schema = "transaction"
     
     @ID(key: .id)
     var id: UUID?
     
     @Field(key: "name")
     var name: String
+    
+    @Field(key: "icon_name")
+    var iconName: String
     
     @Field(key: "amount")
     var amount: Double
@@ -26,23 +29,28 @@ final class Transaction: Model, Content, @unchecked Sendable  {
     @Field(key: "contractor")
     var contractor: String
     
-    @Field(key: "id_transaction_category")
-    var idTransactionCategory: UUID
-    
-    @Field(key: "id_user")
-    var idUser: UUID
-    
+    @Parent(key: "id_user")
+    var user: User
+        
     // Constructeur vide (requis par Fluent)
     init() { }
     
     
-    init(id: UUID? = nil, name: String, amount: Double, date: Date? = nil, contractor: String, idTransactionCategory: UUID, idUser: UUID) {
+    init(
+        id: UUID? = nil,
+        name: String,
+        iconName: String,
+        amount: Double,
+        date: Date? = nil,
+        contractor: String,
+        userID: User.IDValue
+    ) {
         self.id = id
         self.name = name
+        self.iconName = iconName
         self.amount = amount
         self.date = date
         self.contractor = contractor
-        self.idTransactionCategory = idTransactionCategory
-        self.idUser = idUser
+        self.$user.id = userID
     }
 }

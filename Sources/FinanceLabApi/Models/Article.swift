@@ -10,7 +10,7 @@ import Fluent
 
 final class Article: Model, Content, @unchecked Sendable {
     
-    static let schema = "articles"
+    static let schema = "article"
     
     @ID(key: .id)
     var id: UUID?
@@ -24,21 +24,26 @@ final class Article: Model, Content, @unchecked Sendable {
     @Timestamp(key: "creation_date", on: .create)
     var creationDate: Date?
     
-    @Field(key: "content")
-    var content: String
+    @Field(key: "article_category")
+    var articleCategory: String
     
-    @Field(key: "id_article_category")
-    var idArticleCategory: UUID
+    @Children(for: \.$article)
+    var articleContents: [ArticleContent]
     
     // Constructeur vide (requis par Fluent)
     init() { }
     
-    init(id: UUID? = nil, title: String, image: String, creationDate: Date? = nil, content: String, idArticleCategory: UUID) {
+    init(
+        id: UUID? = nil,
+        title: String,
+        image: String,
+        creationDate: Date? = nil,
+        articleCategory: String
+    ) {
         self.id = id
         self.title = title
         self.image = image
         self.creationDate = creationDate
-        self.content = content
-        self.idArticleCategory = idArticleCategory
+        self.articleCategory = articleCategory
     }
 }

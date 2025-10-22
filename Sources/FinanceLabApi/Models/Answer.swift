@@ -18,19 +18,24 @@ final class Answer: Model, Content, @unchecked Sendable {
     @Field(key: "content")
     var content: String
     
-    @Field(key: "id_user")
-    var idUser: UUID
-
-    @Field(key: "id_question")
-    var idQuestion: UUID
-
+    @Parent(key: "id_user")
+    var user: User
+    
+    @Parent(key: "id_question")
+    var question: Question
+    
     // Constructeur vide (requis par Fluent)
     init() {}
     
-    init(id: UUID? = nil, content: String, idUser: UUID? = nil, idQuestion: UUID) {
+    init(
+        id: UUID? = nil,
+        content: String,
+        userID: User.IDValue,
+        questionID: Question.IDValue
+    ) {
         self.id = id
         self.content = content
-        self.idUser = idUser
-        self.idQuestion = idQuestion
+        self.$user.id = userID
+        self.$question.id = questionID
     }
 }

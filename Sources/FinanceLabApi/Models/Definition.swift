@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 
 final class Definition: Model, Content, @unchecked Sendable  {
-    static let schema = "definitions"
+    static let schema = "definition"
     
     @ID(key: .id)
     var id: UUID?
@@ -17,13 +17,17 @@ final class Definition: Model, Content, @unchecked Sendable  {
     @Field(key: "name")
     var name: String
     
-    @Field(key: "amount")
+    @Field(key: "content")
     var content: String
     
     // Constructeur vide (requis par Fluent)
     init() { }
     
-    init(id: UUID? = nil, name: String, content: String) {
+    init(
+        id: UUID? = nil,
+        name: String,
+        content: String
+    ) {
         self.id = id
         self.name = name
         self.content = content

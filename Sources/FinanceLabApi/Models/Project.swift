@@ -9,7 +9,7 @@ import Vapor
 import Fluent
 
 final class Project: Model, Content, @unchecked Sendable {
-    static let schema = "projects"
+    static let schema = "project"
 
     @ID(key: .id)
     var id: UUID?
@@ -17,17 +17,14 @@ final class Project: Model, Content, @unchecked Sendable {
     @Field(key: "name")
     var name: String
     
-    @Field(key: "icon")
-    var icon: String
+    @Field(key: "icon_name")
+    var iconName: String
     
-    @Field(key: "creation_date")
+    @Timestamp(key: "creation_date", on: .create)
     var creationDate: Date?
     
-    @Field(key: "final_date")
-    var finalDate: Date?
-
-    @Field(key: "amount_monthly")
-    var amountMonthly: Double
+    @Field(key: "end_date")
+    var endDate: Date
 
     @Field(key: "amount_saved")
     var amountSaved: Double
@@ -35,22 +32,29 @@ final class Project: Model, Content, @unchecked Sendable {
     @Field(key: "amount_total")
     var amountTotal: Double
     
-    @Field(key: "id_user")
-    var idUser: UUID
-
+    @Parent(key: "id_user")
+    var user: User
+    
     // Constructeur vide (requis par Fluent)
     init() {}
-    
-    init(id: UUID? = nil, name: String, icon: String, creationDate: Date? = nil, finalDate: Date? = nil, amountMonthly: Double, amountSaved: Double, amountTotal: Double, idUser: UUID) {
+
+    init(
+        id: UUID? = nil,
+        name: String,
+        iconName: String,
+        creationDate: Date? = nil,
+        endDate: Date,
+        amountSaved: Double,
+        amountTotal: Double,
+        userID: User.IDValue
+    ) {
         self.id = id
         self.name = name
-        self.icon = icon
+        self.iconName = iconName
         self.creationDate = creationDate
-        self.finalDate = finalDate
-        self.amountMonthly = amountMonthly
+        self.endDate = endDate
         self.amountSaved = amountSaved
         self.amountTotal = amountTotal
-        self.idUser = idUser
+        self.$user.id = userID
     }
-
 }
