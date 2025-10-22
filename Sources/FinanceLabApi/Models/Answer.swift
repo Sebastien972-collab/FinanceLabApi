@@ -19,7 +19,7 @@ final class Answer: Model, Content, @unchecked Sendable {
     var content: String
     
     @Field(key: "id_user")
-    var idUser: UUID?
+    var idUser: UUID
 
     @Field(key: "id_question")
     var idQuestion: UUID
