@@ -42,8 +42,8 @@ public func configure(_ app: Application) async throws {
     
     
     // MARK: - Launch or revert migrations
-//    try await app.autoMigrate()
-    try await app.autoRevert()
+    try await app.autoMigrate()
+//    try await app.autoRevert()
     
     // MARK: - Routes
     // register routes
