@@ -8,10 +8,15 @@
 import Vapor
 
 struct UserDTO: Content {
+    let id: UUID
     let firstName: String
     let lastName: String
     let email: String
-    let password: String
+    var password: String
+    
+    func toUser() -> User {
+        User(id: self.id, firstName: self.firstName, lastName: self.lastName, userCategory: "none", profilePictureURL: "", email: self.email, password: self.password, balance: 0.0)
+    }
 }
 
 struct UserPublicDTO: Content {
@@ -22,9 +27,9 @@ struct UserPublicDTO: Content {
     let profilePictureURL: String
     let email: String
     let balance: Double
-    let answers: [Answer]
-    let projects: [Project]
-    let transactions: [Transaction]
+//    let answers: [Answer]
+//    let projects: [Project]
+//    let transactions: [Transaction]
     
     init(from user: User) throws {
         self.id = try user.requireID()
@@ -32,11 +37,11 @@ struct UserPublicDTO: Content {
         self.lastName = user.lastName
         self.userCategory = user.userCategory
         self.profilePictureURL = user.profilePictureURL
-        self.email = user.profilePictureURL
+        self.email = user.email
         self.balance = user.balance
-        self.answers = user.answers
-        self.projects = user.projects
-        self.transactions = user.transactions
+//        self.answers = user.answers
+//        self.projects = user.projects
+//        self.transactions = user.transactions
     }
 }
 

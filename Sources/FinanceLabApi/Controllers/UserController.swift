@@ -29,11 +29,25 @@ struct UserController: RouteCollection {
     }
     
     @Sendable
-    func create(_ req: Request) async throws -> UserPublicDTO {
-        let user = try req.content.decode(User.self)
+    func create(_ req: Request) async throws -> [String: String] {
+        var user = try req.content.decode(UserDTO.self)
+        
+        // Hachage du mot de passe avant sauvegarde
         user.password = try Bcrypt.hash(user.password)
-        try await user.save(on: req.db)
-        return try UserPublicDTO(from: user)
+        let newUser = user.toUser()
+        try await newUser.save(on: req.db)
+        
+        guard let userID = newUser.id else {
+            throw Abort(.internalServerError, reason: "User ID missing after creation.")
+        }
+        
+        // Génération du token JWT
+        let payload = UserPayload(id: userID)
+        let signer = JWTSigner.hs256(key: "This_app_was_supposed_to_be_called_Dembo")
+        let token = try signer.sign(payload)
+        
+        // Retourne uniquement le token
+        return ["token": token]
     }
     
     @Sendable
@@ -60,11 +74,18 @@ struct UserController: RouteCollection {
     @Sendable
     func profile(_ req: Request) async throws -> UserPublicDTO {
         let payload = try req.auth.require(UserPayload.self)
-        
-        guard let user = try await User.find(payload.id, on: req.db) else {
-            throw Abort(.notFound)
+
+        // Préchargement explicite des relations enfants
+        guard let user = try await User.query(on: req.db)
+            .with(\.$answers)
+            .with(\.$projects)
+            .with(\.$transactions)
+            .filter(\.$id == payload.id)
+            .first()
+        else {
+            throw Abort(.notFound, reason: "User not found")
         }
-        
+
         return try UserPublicDTO(from: user)
     }
 
