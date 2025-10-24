@@ -13,19 +13,20 @@ struct ProjectDTO: Content {
     let name: String
     let iconName: String
     let creationDate: Date?
-    let endDate: Date?
+    let endDate: Date
     let amountSaved: Double
     let amountTotal: Double
-    let idUser: UserPublicDTO
+    let idUser: UUID
     
-    init(from project: Project, user: User) throws {
-        self.id = try project.requireID()
-        self.name = project.name
-        self.iconName = project.iconName
-        self.creationDate = project.creationDate
-        self.endDate = project.endDate
-        self.amountSaved = project.amountSaved
-        self.amountTotal = project.amountTotal
-        self.idUser = try UserPublicDTO(from: user)
+    init(id: UUID? = nil, name: String, iconName: String, creationDate: Date? = nil,
+         endDate: Date, amountSaved: Double, amountTotal: Double, idUser: UUID) {
+        self.id = id
+        self.name = name
+        self.iconName = iconName
+        self.creationDate = .now
+        self.endDate = endDate
+        self.amountSaved = amountSaved
+        self.amountTotal = amountTotal
+        self.idUser = idUser
     }
 }

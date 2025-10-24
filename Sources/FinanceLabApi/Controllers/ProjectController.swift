@@ -31,13 +31,24 @@ struct ProjectController: RouteCollection {
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound, reason: "Utilisateur introuvable")
         }
-        let project = try req.content.decode(Project.self)
+        
+        let dto = try req.content.decode(ProjectDTO.self)
+        
+        // Create the actual Project model
+        let project = Project()
+        project.name = dto.name
+        project.iconName = dto.iconName
+        project.creationDate = .now
+        project.endDate = dto.endDate
+        project.amountSaved = dto.amountSaved
+        project.amountTotal = dto.amountTotal
         project.$user.id = try user.requireID()
+        
         try await project.save(on: req.db)
         
         return project
     }
-
+    
     func getById(req: Request) async throws -> Project {
         let payload = try req.auth.require(UserPayload.self)
         
