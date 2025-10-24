@@ -59,7 +59,7 @@ struct ProjectController: RouteCollection {
         guard let project = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
         }
-        project.user.id = try user.requireID()
+        project.$user.id = try user.requireID()
         try await project.save(on: req.db)
         
         return project
