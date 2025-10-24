@@ -34,7 +34,7 @@ struct AnswerController: RouteCollection {
         
         let dto = try req.content.decode(AnswerDTO.self)
         
-        // Create the actual Project model
+        // Create the actual Answer model
         let answer = Answer()
         answer.content = dto.content
         answer.$user.id = try user.requireID()
@@ -45,20 +45,20 @@ struct AnswerController: RouteCollection {
         return answer
     }
     
-    func getById(req: Request) async throws -> Project {
+    func getById(req: Request) async throws -> Answer {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound)
         }
         
-        guard let project = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
-            throw Abort(.notFound, reason: "Project not found")
+        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+            throw Abort(.notFound, reason: "Answer not found")
         }
-        project.$user.id = try user.requireID()
-        try await project.save(on: req.db)
+        answer.$user.id = try user.requireID()
+        try await answer.save(on: req.db)
         
-        return project
+        return answer
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -68,31 +68,27 @@ struct AnswerController: RouteCollection {
             throw Abort(.notFound)
         }
         
-        guard let project = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
+        guard let answer = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
             throw Abort(.notFound)
         }
-        try await project.delete(on: req.db)
+        try await answer.delete(on: req.db)
         return .noContent
     }
 
-    func update(req: Request) async throws -> Project {
-        guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
-            throw Abort(.notFound, reason: "Project not found")
+    func update(req: Request) async throws -> Answer {
+        guard let existing = try await Answer.find(req.parameters.get("answerID"), on: req.db) else {
+            throw Abort(.notFound, reason: "Answer not found")
         }
-        let input = try req.content.decode(ProjectDTO.self)
+        let dto = try req.content.decode(AnswerDTO.self)
         // Preserve the existing identifier to ensure we update the correct record
-        existing.name = input.name
-        existing.iconName = input.iconName
-        existing.endDate = input.endDate
-        existing.amountSaved = input.amountSaved
-        existing.amountTotal = input.amountTotal
-        existing.$user.id = input.idUser
+        existing.content = dto.content
+        existing.$question.id = dto.idQuestion
 
         try await existing.save(on: req.db)
         return existing
     }
     
-    func getByUserID(req: Request) async throws -> [Project] {
+    func getByUserID(req: Request) async throws -> [Answer] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -102,14 +98,14 @@ struct AnswerController: RouteCollection {
             throw Abort(.badRequest, reason: "Invalid user ID format")
         }
 
-        let projects = try await Project.query(on: req.db)
+        let answers = try await Answer.query(on: req.db)
             .filter(\.$user.$id == userUUID)
             .all()
 
-        if projects.isEmpty {
-            throw Abort(.notFound, reason: "No projects found for this user")
+        if answers.isEmpty {
+            throw Abort(.notFound, reason: "No answers found for this user")
         }
 
-        return projects
+        return answers
     }
 }
