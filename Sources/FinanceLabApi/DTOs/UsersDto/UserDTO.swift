@@ -8,14 +8,14 @@
 import Vapor
 
 struct UserDTO: Content {
-    let id: UUID
+//    let id: UUID
     let firstName: String
     let lastName: String
     let email: String
     var password: String
     
     func toUser() -> User {
-        User(id: self.id, firstName: self.firstName, lastName: self.lastName, userCategory: "none", profilePictureURL: "", email: self.email, password: self.password, balance: 0.0)
+        User(id: UUID(), firstName: self.firstName, lastName: self.lastName, userCategory: "none", profilePictureURL: "", email: self.email, password: self.password, balance: 0.0)
     }
 }
 

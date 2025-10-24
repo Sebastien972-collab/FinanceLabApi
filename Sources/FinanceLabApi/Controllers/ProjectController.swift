@@ -31,13 +31,24 @@ struct ProjectController: RouteCollection {
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound, reason: "Utilisateur introuvable")
         }
-        let project = try req.content.decode(Project.self)
+        
+        let dto = try req.content.decode(ProjectDTO.self)
+        
+        // Create the actual Project model
+        let project = Project()
+        project.name = dto.name
+        project.iconName = dto.iconName
+        project.creationDate = .now
+        project.endDate = dto.endDate
+        project.amountSaved = dto.amountSaved
+        project.amountTotal = dto.amountTotal
         project.$user.id = try user.requireID()
+        
         try await project.save(on: req.db)
         
         return project
     }
-
+    
     func getById(req: Request) async throws -> Project {
         let payload = try req.auth.require(UserPayload.self)
         
@@ -48,7 +59,7 @@ struct ProjectController: RouteCollection {
         guard let project = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
         }
-        project.user.id = try user.requireID()
+        project.$user.id = try user.requireID()
         try await project.save(on: req.db)
         
         return project
@@ -72,12 +83,19 @@ struct ProjectController: RouteCollection {
         guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
         }
-        let input = try req.content.decode(Project.self)
+        let input = try req.content.decode(ProjectDTO.self)
         // Preserve the existing identifier to ensure we update the correct record
-        input.id = existing.id
-        try await input.update(on: req.db)
-        return input
+        existing.name = input.name
+        existing.iconName = input.iconName
+        existing.endDate = input.endDate
+        existing.amountSaved = input.amountSaved
+        existing.amountTotal = input.amountTotal
+        existing.$user.id = input.idUser
+
+        try await existing.save(on: req.db)
+        return existing
     }
+    
     func getByUserID(req: Request) async throws -> [Project] {
         let payload = try req.auth.require(UserPayload.self)
         

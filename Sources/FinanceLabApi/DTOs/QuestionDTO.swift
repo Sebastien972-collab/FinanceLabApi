@@ -14,7 +14,6 @@ struct QuestionDTO: Content {
     let content: String
     let followUpLabel: String?
     let questionGroup: String
-    let answers: [Answer]
     
     init(from question: Question) throws {
         self.id = try question.requireID()
@@ -22,6 +21,5 @@ struct QuestionDTO: Content {
         self.content = question.content
         self.followUpLabel = question.followUpLabel
         self.questionGroup = question.questionGroup
-        self.answers = question.answers
     }
 }
