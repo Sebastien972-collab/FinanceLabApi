@@ -8,7 +8,6 @@
 import Vapor
 
 struct ProjectDTO: Content {
-    
     let id: UUID?
     let name: String
     let iconName: String
@@ -16,8 +15,6 @@ struct ProjectDTO: Content {
     let endDate: Date
     let amountSaved: Double
     let amountTotal: Double
-    let idUser: UUID
-    
     init(id: UUID? = nil, name: String, iconName: String, creationDate: Date? = nil,
          endDate: Date, amountSaved: Double, amountTotal: Double, idUser: UUID) {
         self.id = id
@@ -27,6 +24,5 @@ struct ProjectDTO: Content {
         self.endDate = endDate
         self.amountSaved = amountSaved
         self.amountTotal = amountTotal
-        self.idUser = idUser
     }
 }

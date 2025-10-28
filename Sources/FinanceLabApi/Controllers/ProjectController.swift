@@ -49,7 +49,7 @@ struct ProjectController: RouteCollection {
         return project
     }
     
-    func getById(req: Request) async throws -> Project {
+    func getById(req: Request) async throws -> ProjectDTO {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -61,8 +61,7 @@ struct ProjectController: RouteCollection {
         }
         project.$user.id = try user.requireID()
         try await project.save(on: req.db)
-        
-        return project
+        return project.toDTO()
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
@@ -90,13 +89,12 @@ struct ProjectController: RouteCollection {
         existing.endDate = input.endDate
         existing.amountSaved = input.amountSaved
         existing.amountTotal = input.amountTotal
-        existing.$user.id = input.idUser
 
         try await existing.save(on: req.db)
         return existing
     }
     
-    func getByUserID(req: Request) async throws -> [Project] {
+    func getByUserID(req: Request) async throws -> [ProjectDTO] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -114,6 +112,6 @@ struct ProjectController: RouteCollection {
             throw Abort(.notFound, reason: "No projects found for this user")
         }
 
-        return projects
+        return projects.map { $0.toDTO() }
     }
 }

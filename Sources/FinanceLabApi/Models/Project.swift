@@ -58,3 +58,17 @@ final class Project: Model, Content, @unchecked Sendable {
         self.$user.id = userID
     }
 }
+extension Project {
+    func toDTO() -> ProjectDTO {
+        return ProjectDTO(
+            id: self.id,
+            name: self.name,
+            iconName: self.iconName,
+            creationDate: self.creationDate,
+            endDate: self.endDate,
+            amountSaved: self.amountSaved,
+            amountTotal: self.amountTotal,
+            idUser: self.$user.id
+        )
+    }
+}

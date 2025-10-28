@@ -44,7 +44,7 @@ final class User: Model, Content, @unchecked Sendable {
     @Children(for: \.$user)
     var projects: [Project]
     
-    @Children(for: \.$user)
+    @Children(for: \.$user) 
     var transactions: [Transaction]
     
     // Constructeur vide (requis par Fluent)
