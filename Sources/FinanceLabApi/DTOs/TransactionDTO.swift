@@ -15,16 +15,24 @@ struct TransactionDTO: Content {
     let amount: Double
     let date: Date?
     let contractor: String
-    let idUser: UserPublicDTO
+    let idUser: UUID
     
-    init(from transaction: Transaction, user: User) throws {
-        self.id = try transaction.requireID()
-        self.name = transaction.name
-        self.iconName = transaction.iconName
-        self.amount = transaction.amount
-        self.date = transaction.date
-        self.contractor = transaction.contractor
-        self.idUser = try UserPublicDTO(from: user)
+    init(
+        id: UUID? = nil,
+        name: String,
+        iconName: String,
+        amount: Double,
+        date: Date? = nil,
+        contractor: String,
+        idUser: UUID
+    ) throws {
+        self.id = id
+        self.name = name
+        self.iconName = iconName
+        self.amount = amount
+        self.date = date
+        self.contractor = contractor
+        self.idUser = idUser
     }
 }
 

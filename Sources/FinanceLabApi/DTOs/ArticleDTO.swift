@@ -14,7 +14,6 @@ struct ArticleDTO: Content {
     let image: String
     let creationDate: Date?
     let articleCategory: String
-    let articleContents: [ArticleContent]
     
     init(from article: Article) throws {
         self.id = try article.requireID()
@@ -22,7 +21,6 @@ struct ArticleDTO: Content {
         self.image = article.image
         self.creationDate = article.creationDate
         self.articleCategory = article.articleCategory
-        self.articleContents = article.articleContents
     }
     
 }
