@@ -26,10 +26,10 @@ struct TransactionController: RouteCollection {
     }
 
     @Sendable
-    func create(req: Request) async throws -> Transaction {
+    func create(req: Request) async throws -> TransactionDTO {
         let payload = try req.auth.require(UserPayload.self)
         guard let user = try await User.find(payload.id, on: req.db) else {
-            throw Abort(.notFound, reason: "Utilisateur introuvable")
+            throw Abort(.notFound, reason: "User not found")
         }
         
         let dto = try req.content.decode(TransactionDTO.self)
@@ -45,14 +45,13 @@ struct TransactionController: RouteCollection {
         
         try await transaction.save(on: req.db)
         
-        return transaction
+        return transaction.toTransactionDTO()
     }
     
     func getById(req: Request) async throws -> Transaction {
         let payload = try req.auth.require(UserPayload.self)
-        
         guard let user = try await User.find(payload.id, on: req.db) else {
-            throw Abort(.notFound)
+            throw Abort(.notFound, reason: "User not found")
         }
         
         guard let transaction = try await Transaction.find(req.parameters.get("transactionID"), on: req.db) else {
@@ -89,13 +88,12 @@ struct TransactionController: RouteCollection {
         existing.amount = dto.amount
         existing.date = dto.date
         existing.contractor = dto.contractor
-        existing.$user.id = dto.idUser
 
         try await existing.save(on: req.db)
         return existing
     }
     
-    func getByUserID(req: Request) async throws -> [Transaction] {
+    func getByUserID(req: Request) async throws -> [TransactionDTO] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -113,6 +111,6 @@ struct TransactionController: RouteCollection {
             throw Abort(.notFound, reason: "No transaction found for this user")
         }
 
-        return transactions
+        return transactions.map{ $0.toTransactionDTO() }
     }
 }
