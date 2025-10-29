@@ -23,7 +23,7 @@ final class Transaction: Model, Content, @unchecked Sendable  {
     @Field(key: "amount")
     var amount: Double
     
-    @Timestamp(key: "date", on: .create)
+    @Timestamp(key: "date", on: .none)
     var date: Date?
     
     @Field(key: "contractor")
@@ -35,6 +35,16 @@ final class Transaction: Model, Content, @unchecked Sendable  {
     // Constructeur vide (requis par Fluent)
     init() { }
     
+    func toTransactionDTO() -> TransactionDTO {
+        TransactionDTO(
+            id: id,
+            name: name,
+            iconName: iconName,
+            amount: amount,
+            date: date ?? Date(),
+            contractor: contractor
+        )
+    }
     
     init(
         id: UUID? = nil,
