@@ -21,7 +21,6 @@ struct AnswerController: RouteCollection {
     }
 
     func index(req: Request) async throws -> [Answer] {
-        
         try await Answer.query(on: req.db).all()
     }
 

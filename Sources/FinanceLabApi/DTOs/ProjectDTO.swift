@@ -8,14 +8,14 @@
 import Vapor
 
 struct ProjectDTO: Content {
-    let id: UUID?
+    let id: UUID
     let name: String
     let iconName: String
-    let creationDate: Date?
+    let creationDate: Date
     let endDate: Date
     let amountSaved: Double
     let amountTotal: Double
-    init(id: UUID? = nil, name: String, iconName: String, creationDate: Date? = nil,
+    init(id: UUID, name: String, iconName: String, creationDate: Date = .now,
          endDate: Date, amountSaved: Double, amountTotal: Double, idUser: UUID) {
         self.id = id
         self.name = name

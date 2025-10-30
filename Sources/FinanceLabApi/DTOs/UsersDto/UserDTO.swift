@@ -8,7 +8,6 @@
 import Vapor
 
 struct UserDTO: Content {
-//    let id: UUID
     let firstName: String
     let lastName: String
     let email: String

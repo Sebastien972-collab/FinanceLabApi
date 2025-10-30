@@ -26,7 +26,7 @@ struct ProjectController: RouteCollection {
     }
 
     @Sendable
-    func create(req: Request) async throws -> Project {
+    func create(req: Request) async throws -> ProjectDTO {
         let payload = try req.auth.require(UserPayload.self)
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound, reason: "Utilisateur introuvable")
@@ -36,6 +36,7 @@ struct ProjectController: RouteCollection {
         
         // Create the actual Project model
         let project = Project()
+        project.id = dto.id
         project.name = dto.name
         project.iconName = dto.iconName
         project.creationDate = .now
@@ -46,7 +47,7 @@ struct ProjectController: RouteCollection {
         
         try await project.save(on: req.db)
         
-        return project
+        return project.toDTO()
     }
     
     func getById(req: Request) async throws -> ProjectDTO {
@@ -78,9 +79,16 @@ struct ProjectController: RouteCollection {
         return .noContent
     }
 
-    func update(req: Request) async throws -> Project {
+    func update(req: Request) async throws -> ProjectDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        
+        //guard let user = try await User.find(payload.id, on: req.db) else {
+        
         guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
+        }
+        guard existing.$user.id == payload.id else {
+            throw Abort(.forbidden, reason: "Not the author")
         }
         let input = try req.content.decode(ProjectDTO.self)
         // Preserve the existing identifier to ensure we update the correct record
@@ -91,7 +99,7 @@ struct ProjectController: RouteCollection {
         existing.amountTotal = input.amountTotal
 
         try await existing.save(on: req.db)
-        return existing
+        return existing.toDTO()
     }
     
     func getByUserID(req: Request) async throws -> [ProjectDTO] {

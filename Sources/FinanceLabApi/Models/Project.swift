@@ -61,10 +61,10 @@ final class Project: Model, Content, @unchecked Sendable {
 extension Project {
     func toDTO() -> ProjectDTO {
         return ProjectDTO(
-            id: self.id,
+            id: self.id ?? UUID(),
             name: self.name,
             iconName: self.iconName,
-            creationDate: self.creationDate,
+            creationDate: self.creationDate ?? .now,
             endDate: self.endDate,
             amountSaved: self.amountSaved,
             amountTotal: self.amountTotal,
