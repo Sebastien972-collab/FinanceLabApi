@@ -11,20 +11,21 @@ import Fluent
 struct QuestionController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let questions = routes.grouped("questions")
-        //questions.get(use: index)
+        
         let protectedRoutes = questions.grouped(JWTMiddleware())
+        protectedRoutes.get(use: index)
         protectedRoutes.post(use: create)
         protectedRoutes.get(":questionID", use: getById)
         protectedRoutes.delete(":questionID", use: delete)
         protectedRoutes.put(":questionID", use: update)
     }
 
-    func index(req: Request) async throws -> [Question] {
-        try await Question.query(on: req.db).all()
+    func index(req: Request) async throws -> [QuestionDTO] {
+        try await Question.query(on: req.db).all().map { QuestionDTO(from: $0)}
     }
 
     @Sendable
-    func create(req: Request) async throws -> Question {
+    func create(req: Request) async throws -> QuestionDTO {
         let payload = try req.auth.require(UserPayload.self)
         
         let dto = try req.content.decode(QuestionDTO.self)
@@ -35,10 +36,10 @@ struct QuestionController: RouteCollection {
         question.content = dto.content
         question.followUpLabel = dto.followUpLabel
         question.questionGroup = dto.questionGroup
-        
+        question.id = dto.id
         try await question.save(on: req.db)
         
-        return question
+        return question.toDTO()
     }
     
     func getById(req: Request) async throws -> Question {

@@ -38,4 +38,7 @@ final class Answer: Model, Content, @unchecked Sendable {
         self.$user.id = userID
         self.$question.id = questionID
     }
+    func toDto() -> AnswerDTO {
+        AnswerDTO(id: self.id, content: self.content, idQuestion: self.question.id ?? .init())
+    }
 }

@@ -45,4 +45,8 @@ final class Question: Model, Content, @unchecked Sendable {
         self.followUpLabel = followUpLabel
         self.questionGroup = questionGroup
     }
+    
+    func toDTO() -> QuestionDTO {
+        QuestionDTO(from: self)
+    }
 }

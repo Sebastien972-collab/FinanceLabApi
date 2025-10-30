@@ -87,7 +87,7 @@ struct AnswerController: RouteCollection {
         return existing
     }
     
-    func getByUserID(req: Request) async throws -> [Answer] {
+    func getByUserID(req: Request) async throws -> [AnswerDTO] {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -105,6 +105,6 @@ struct AnswerController: RouteCollection {
             throw Abort(.notFound, reason: "No answers found for this user")
         }
 
-        return answers
+        return answers.map { $0.toDto() }
     }
 }
