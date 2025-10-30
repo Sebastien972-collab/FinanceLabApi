@@ -13,26 +13,23 @@ struct TransactionDTO: Content {
     let name: String
     let iconName: String
     let amount: Double
-    let date: Date?
+    let date: Date
     let contractor: String
-    let idUser: UUID
     
     init(
         id: UUID? = nil,
         name: String,
         iconName: String,
         amount: Double,
-        date: Date? = nil,
+        date: Date,
         contractor: String,
-        idUser: UUID
-    ) throws {
+    ) {
         self.id = id
         self.name = name
         self.iconName = iconName
         self.amount = amount
         self.date = date
         self.contractor = contractor
-        self.idUser = idUser
     }
 }
 
