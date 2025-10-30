@@ -27,10 +27,6 @@ struct UserPublicDTO: Content {
     let profilePictureURL: String
     let email: String
     let balance: Double
-//    let answers: [Answer]
-//    let projects: [Project]
-//    let transactions: [Transaction]
-    
     init(from user: User) throws {
         self.id = try user.requireID()
         self.firstName = user.firstName
@@ -39,9 +35,6 @@ struct UserPublicDTO: Content {
         self.profilePictureURL = user.profilePictureURL
         self.email = user.email
         self.balance = user.balance
-//        self.answers = user.answers
-//        self.projects = user.projects
-//        self.transactions = user.transactions
     }
 }
 
