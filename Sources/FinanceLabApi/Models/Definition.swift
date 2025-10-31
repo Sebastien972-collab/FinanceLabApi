@@ -23,6 +23,14 @@ final class Definition: Model, Content, @unchecked Sendable  {
     // Constructeur vide (requis par Fluent)
     init() { }
     
+    func toDefinitionDTO() -> DefinitionDTO {
+        DefinitionDTO(
+            id: id,
+            name: name,
+            content: content
+        )
+    }
+    
     init(
         id: UUID? = nil,
         name: String,

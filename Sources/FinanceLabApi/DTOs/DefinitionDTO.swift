@@ -13,10 +13,9 @@ struct DefinitionDTO: Content {
     let name: String
     let content: String
     
-    init(from definition: Definition) throws {
-        self.id = try definition.requireID()
-        self.name = definition.name
-        self.content = definition.content
-        
+    init(id: UUID? = nil, name: String, content: String) {
+        self.id = id
+        self.name = name
+        self.content = content
     }
 }

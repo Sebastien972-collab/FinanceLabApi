@@ -12,19 +12,16 @@ struct ArticleContentDTO: Content {
     let orderPlacement: Int
     let type: String
     let content: String
-    let idArticle: UUID
     
     init(
         id: UUID? = nil,
         orderPlacement: Int,
         type: String,
-        content: String,
-        idArticle: UUID
+        content: String
     ) {
         self.id = id
         self.orderPlacement = orderPlacement
         self.type = type
         self.content = content
-        self.idArticle = idArticle
     }
 }

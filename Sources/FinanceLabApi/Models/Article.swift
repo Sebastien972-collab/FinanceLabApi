@@ -46,4 +46,13 @@ final class Article: Model, Content, @unchecked Sendable {
         self.creationDate = creationDate
         self.articleCategory = articleCategory
     }
+    
+    func toArticleDTO() -> ArticleDTO {
+        ArticleDTO(id: id,
+                   title: title,
+                   image: image,
+                   creationDate: creationDate,
+                   articleCategory: articleCategory)
+        
+    }
 }
