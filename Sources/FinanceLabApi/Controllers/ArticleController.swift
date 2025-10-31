@@ -11,20 +11,16 @@ import Fluent
 struct ArticleController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let articles = routes.grouped("articles")
-        //articles.get(use: index)
         let protectedRoutes = articles.grouped(JWTMiddleware())
         protectedRoutes.post(use: create)
         protectedRoutes.get(":articleID", use: getById)
         protectedRoutes.delete(":articleID", use: delete)
         protectedRoutes.put(":articleID", use: update)
-    }
-
-    func index(req: Request) async throws -> [Article] {
-        try await Article.query(on: req.db).all()
+        protectedRoutes.get(use: index)
     }
 
     @Sendable
-    func create(req: Request) async throws -> Article {
+    func create(req: Request) async throws -> Article{
         let payload = try req.auth.require(UserPayload.self)
         
         let dto = try req.content.decode(ArticleDTO.self)
@@ -82,6 +78,21 @@ struct ArticleController: RouteCollection {
 
         try await existing.save(on: req.db)
         return existing
+    }
+    
+    func index(req: Request) async throws -> [ArticleDTO] {
+        // Authentificate user
+        let _ = try req.auth.require(UserPayload.self)
+
+        // Finds all articles in database
+        let articles = try await Article.query(on: req.db)
+            .all()
+        if articles.isEmpty {
+            throw Abort(.notFound, reason: "No articles found")
+        }
+
+        // Returns the transactions in an array of transaction DTOs
+        return articles.map{ $0.toArticleDTO() }
     }
     
 }
