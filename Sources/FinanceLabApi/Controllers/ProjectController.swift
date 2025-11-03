@@ -81,23 +81,29 @@ struct ProjectController: RouteCollection {
 
     func update(req: Request) async throws -> ProjectDTO {
         let payload = try req.auth.require(UserPayload.self)
-        
-        //guard let user = try await User.find(payload.id, on: req.db) else {
-        
-        guard let existing = try await Project.find(req.parameters.get("projectID"), on: req.db) else {
+
+        guard let projectID = req.parameters.get("projectID"),
+              let uuid = UUID(uuidString: projectID)
+        else {
+            throw Abort(.badRequest, reason: "Invalid project ID format")
+        }
+
+        guard let existing = try await Project.find(uuid, on: req.db) else {
             throw Abort(.notFound, reason: "Project not found")
         }
+
         guard existing.$user.id == payload.id else {
-            throw Abort(.forbidden, reason: "Not the author")
+            throw Abort(.forbidden, reason: "Not allowed to update this project")
         }
+
         let input = try req.content.decode(ProjectDTO.self)
-        // Preserve the existing identifier to ensure we update the correct record
+
         existing.name = input.name
         existing.iconName = input.iconName
         existing.endDate = input.endDate
         existing.amountSaved = input.amountSaved
         existing.amountTotal = input.amountTotal
-
+        existing.iconName = input.iconName
         try await existing.save(on: req.db)
         return existing.toDTO()
     }

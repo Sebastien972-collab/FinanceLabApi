@@ -12,7 +12,6 @@ struct UserDTO: Content {
     let lastName: String
     let email: String
     var password: String
-    
     func toUser() -> User {
         User(id: UUID(), firstName: self.firstName, lastName: self.lastName, userCategory: "none", profilePictureURL: "", email: self.email, password: self.password, balance: 0.0)
     }
@@ -44,4 +43,7 @@ struct PatchUserDTO: Decodable {
     var profilePictureURL: String?
     var email: String?
     var balance: Double?
+}
+struct UpdateBalanceDTO: Content {
+    let balance: Double
 }

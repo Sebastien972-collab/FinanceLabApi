@@ -20,6 +20,7 @@ struct UserController: RouteCollection {
         let protectedRoutes = users.grouped(JWTMiddleware())
         protectedRoutes.get("profile", use: profile)
         protectedRoutes.patch("update", use: update)
+        protectedRoutes.patch("balance", use: updateBalance)
         
         // TODO: Some of these routes might need to be disabled before going into production
         users.group(":userID") { user in
@@ -144,5 +145,19 @@ struct UserController: RouteCollection {
         
         try await user.save(on: req.db)
         return try UserPublicDTO(from: user)
+    }
+    @Sendable
+    func updateBalance(_ req: Request) async throws -> UpdateBalanceDTO {
+        let payload = try req.auth.require(UserPayload.self)
+        let data = try req.content.decode(UpdateBalanceDTO.self)
+
+        guard let user = try await User.find(payload.id, on: req.db) else {
+            throw Abort(.notFound, reason: "User not found")
+        }
+
+        user.balance = user.balance + data.balance
+        try await user.save(on: req.db)
+
+        return UpdateBalanceDTO(balance: user.balance)
     }
 }

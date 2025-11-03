@@ -14,6 +14,7 @@ struct AnswerController: RouteCollection {
         //answers.get(use: index)
         let protectedRoutes = answers.grouped(JWTMiddleware())
         protectedRoutes.post(use: create)
+        protectedRoutes.post("bulk", use: postAllAsnwsers)
         protectedRoutes.get(":answerID", use: getById)
         protectedRoutes.delete(":answerID", use: delete)
         protectedRoutes.put(":answerID", use: update)
@@ -25,7 +26,7 @@ struct AnswerController: RouteCollection {
     }
 
     @Sendable
-    func create(req: Request) async throws -> Answer {
+    func create(req: Request) async throws -> AnswerDTO {
         let payload = try req.auth.require(UserPayload.self)
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound, reason: "Utilisateur introuvable")
@@ -41,7 +42,29 @@ struct AnswerController: RouteCollection {
         
         try await answer.save(on: req.db)
         
-        return answer
+        return answer.toDto()
+    }
+    @Sendable
+    func postAllAsnwsers(req: Request) async throws -> [AnswerDTO] {
+        let payload = try req.auth.require(UserPayload.self)
+        guard let user = try await User.find(payload.id, on: req.db) else {
+            throw Abort(.notFound, reason: "Utilisateur introuvable")
+        }
+        
+        let dto = try req.content.decode([AnswerDTO].self)
+        
+        // Create the actual Answer model
+        var answers: [AnswerDTO] = []
+        for answer in dto {
+            let newAnswer = Answer()
+            newAnswer.content = answer.content
+            newAnswer.$user.id = try user.requireID()
+            newAnswer.$question.id = answer.idQuestion
+            try await newAnswer.save(on: req.db)
+            answers.append(newAnswer.toDto())
+        }
+        
+        return answers
     }
     
     func getById(req: Request) async throws -> Answer {

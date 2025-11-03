@@ -11,9 +11,9 @@ import Fluent
 struct QuestionController: RouteCollection {
     func boot(routes: any RoutesBuilder) throws {
         let questions = routes.grouped("questions")
-        
+        questions.get(use: index)
         let protectedRoutes = questions.grouped(JWTMiddleware())
-        protectedRoutes.get(use: index)
+        
         protectedRoutes.post(use: create)
         protectedRoutes.get(":questionID", use: getById)
         protectedRoutes.delete(":questionID", use: delete)
