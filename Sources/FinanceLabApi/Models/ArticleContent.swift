@@ -29,6 +29,15 @@ final class ArticleContent: Model, Content, @unchecked Sendable {
     // Constructeur vide (requis par Fluent)
     init() {}
     
+    func toArticleContentDTO() -> ArticleContentDTO {
+        ArticleContentDTO(
+            id: id,
+            orderPlacement: orderPlacement,
+            type: type,
+            content: content
+        )
+    }
+    
     init(
         id: UUID? = nil,
         orderPlacement: Int,

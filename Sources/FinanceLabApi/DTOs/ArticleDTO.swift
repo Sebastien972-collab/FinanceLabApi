@@ -15,12 +15,16 @@ struct ArticleDTO: Content {
     let creationDate: Date?
     let articleCategory: String
     
-    init(from article: Article) throws {
-        self.id = try article.requireID()
-        self.title = article.title
-        self.image = article.image
-        self.creationDate = article.creationDate
-        self.articleCategory = article.articleCategory
+    init(id: UUID? = nil,
+         title: String,
+         image: String,
+         creationDate: Date?,
+         articleCategory: String
+    ){
+        self.id = id
+        self.title = title
+        self.image = image
+        self.creationDate = creationDate
+        self.articleCategory = articleCategory
     }
-    
 }
