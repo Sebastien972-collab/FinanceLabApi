@@ -15,6 +15,7 @@ struct AnswerController: RouteCollection {
         let protectedRoutes = answers.grouped(JWTMiddleware())
         protectedRoutes.post(use: create)
         protectedRoutes.post("bulk", use: postAllAnswers)
+        protectedRoutes.get("groups", use: getAnsweredGroups)
         protectedRoutes.get(":answerID", use: getById)
         protectedRoutes.delete(":answerID", use: delete)
         protectedRoutes.put(":answerID", use: update)
@@ -81,6 +82,24 @@ struct AnswerController: RouteCollection {
         try await answer.save(on: req.db)
         
         return answer
+    }
+    
+    func getAnsweredGroups(req: Request) async throws -> [String] {
+        let payload = try req.auth.require(UserPayload.self)
+        
+        guard let user = try await User.find(payload.id, on: req.db) else {
+            throw Abort(.notFound)
+        }
+        guard let userUUID = user.id else {
+            throw Abort(.badRequest, reason: "Invalid user ID format")
+        }
+
+        let answers = try await Answer.query(on: req.db)
+            .filter(\.$user.$id == userUUID)
+            .with(\.$question)
+            .all()
+        let questionGroups = Array(Set(answers.compactMap { $0.question.questionGroup }))
+        return questionGroups
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
