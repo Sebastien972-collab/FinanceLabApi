@@ -42,7 +42,7 @@ struct QuestionController: RouteCollection {
         return question.toDTO()
     }
     
-    func getById(req: Request) async throws -> Question {
+    func getById(req: Request) async throws -> QuestionDTO {
         let payload = try req.auth.require(UserPayload.self)
         
         guard let user = try await User.find(payload.id, on: req.db) else {
@@ -54,7 +54,7 @@ struct QuestionController: RouteCollection {
         }
         try await question.save(on: req.db)
         
-        return question
+        return question.toDTO()
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
