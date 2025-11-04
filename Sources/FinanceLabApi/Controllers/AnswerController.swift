@@ -14,7 +14,7 @@ struct AnswerController: RouteCollection {
         //answers.get(use: index)
         let protectedRoutes = answers.grouped(JWTMiddleware())
         protectedRoutes.post(use: create)
-        protectedRoutes.post("bulk", use: postAllAsnwsers)
+        protectedRoutes.post("bulk", use: postAllAnswers)
         protectedRoutes.get(":answerID", use: getById)
         protectedRoutes.delete(":answerID", use: delete)
         protectedRoutes.put(":answerID", use: update)
@@ -45,7 +45,7 @@ struct AnswerController: RouteCollection {
         return dto
     }
     @Sendable
-    func postAllAsnwsers(req: Request) async throws -> [AnswerDTO] {
+    func postAllAnswers(req: Request) async throws -> [AnswerDTO] {
         let payload = try req.auth.require(UserPayload.self)
         guard let user = try await User.find(payload.id, on: req.db) else {
             throw Abort(.notFound, reason: "Utilisateur introuvable")
