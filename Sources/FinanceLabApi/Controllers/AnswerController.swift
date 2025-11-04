@@ -42,7 +42,7 @@ struct AnswerController: RouteCollection {
         
         try await answer.save(on: req.db)
         
-        return answer.toDto()
+        return dto
     }
     @Sendable
     func postAllAsnwsers(req: Request) async throws -> [AnswerDTO] {
